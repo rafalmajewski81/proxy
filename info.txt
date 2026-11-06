@@ -1,0 +1,32 @@
+Walidator bundle’a Apigee API Proxy
+Skrypt validation/validate.py służy do lokalnej walidacji bundle’a Apigee API Proxy przed importem lub wdrożeniem. Może być używany lokalnie przez developerów oraz jako etap procesu GitLab CI/CD.
+
+Walidator analizuje wskazany katalog apiproxy/ i raportuje błędy struktury, składni XML oraz podstawowych zależności pomiędzy elementami konfiguracji.
+Uruchomienie
+python validation/validate.py apiproxy
+Zakres walidacji
+Skrypt sprawdza:
+- czy wskazany katalog apiproxy/ istnieje;
+- poprawność składni wszystkich plików XML znajdujących się w bundle’u;
+- obecność jednej głównej definicji <APIProxy> w katalogu głównym;
+- czy definicja APIProxy ma niepusty atrybut name;
+- pliki w katalogu proxies/ — czy posiadają root element ProxyEndpoint i niepustą nazwę;
+- pliki w katalogu targets/ — czy posiadają root element TargetEndpoint i niepustą nazwę;
+- pliki w katalogu policies/ — czy policies mają niepuste i unikalne nazwy;
+- referencje Step → Policy — czy każda policy użyta w <Step> istnieje;
+- referencje RouteRule → TargetEndpoint — czy TargetEndpoint wskazany przez ProxyEndpoint istnieje;
+- czy występujący element BasePath nie jest pusty;
+- nieużywane policies — są raportowane jako WARNING, bez blokowania procesu.
+Katalogi targets/ oraz resources/ są opcjonalne. Ich brak nie powoduje błędu walidacji.
+Wynik i integracja CI/CD
+Skrypt generuje raport z poziomami:
+PASS     kontrola zakończona poprawnie
+INFO     informacja
+WARNING  potencjalny problem, nie blokuje deploymentu
+ERROR    błąd blokujący deployment
+Kody wyjścia:
+0  brak błędów ERROR
+1  wystąpił co najmniej jeden ERROR
+Dzięki temu GitLab CI może automatycznie zatrzymać pipeline przed importem lub deploymentem niepoprawnego API Proxy.
+Ograniczenia obecnej wersji
+Walidator nie zastępuje walidacji serwerowej Apigee. Obecna wersja nie sprawdza jeszcze pełnej semantyki wszystkich policy, dostępności backendu, unikalności BasePath względem innych proxy w organizacji ani referencji do zasobów z katalogu resources/.
