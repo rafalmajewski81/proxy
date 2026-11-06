@@ -1,4 +1,5 @@
 Walidator bundle’a Apigee API Proxy
+Najważniejszy obecny gate to: każda użyta policy i każdy użyty TargetEndpoint muszą istnieć, a cały bundle musi być poprawnym XML-em.
 Skrypt validation/validate.py służy do lokalnej walidacji bundle’a Apigee API Proxy przed importem lub wdrożeniem. Może być używany lokalnie przez developerów oraz jako etap procesu GitLab CI/CD.
 
 Walidator analizuje wskazany katalog apiproxy/ i raportuje błędy struktury, składni XML oraz podstawowych zależności pomiędzy elementami konfiguracji.
